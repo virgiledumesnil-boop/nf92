@@ -1,3 +1,11 @@
+:root {
+    --primaire: #E63946; /* Rouge auto-école dynamique */
+    --fond-page: #F5F6F8; /* Gris très clair (ton actuel) */
+    --fond-carte: #FFFFFF; /* Blanc pur pour les formulaires */
+    --texte-principal: #2B2D42; /* Bleu nuit presque noir, plus doux que #000 */
+    --texte-secondaire: #8D99AE; /* Gris bleuté pour les labels et bordures */
+    --bordure-focus: #457B9D; /* Bleu moyen pour le focus des champs */
+}
 * {
     margin: 0;
     padding: 0;
@@ -24,7 +32,7 @@ h2{
     font-size: clamp(1.1rem, 2.5vw, 1.8rem);
     font-family: 'montserrat', sans-serif;
 }
-
+ /* ----------Menu---------- */
 .menu{
     background: #DFE1E6;
     padding: 20px 0;
@@ -33,7 +41,7 @@ h2{
 .menu_title {
     text-align: center;
     border-radius: 4px;
-    background: red;
+    background: var(--primaire);
     font-family: 'montserrat', sans-serif;
     max-width: 600px;
     width: 95%;
@@ -58,10 +66,10 @@ h2{
     max-width: 260px;
     min-width: 100px;
     margin: 16px auto;
-    padding: 5px 10px;
+    padding: 10px 10px;
 
     text-decoration: none;
-    font-size: clamp(0.8rem, 1.1vw, 1rem);
+    font-size: clamp(1rem, 1.1vw, 1.5rem);
     font-weight: 600;
     letter-spacing: 0.4px;
     color: #0a0909;
@@ -83,12 +91,102 @@ h2{
 }
 .menu-link.active {
     background: white;
+    border-left: 4px solid var(--primaire);
+    color: var(--primaire);
 }
 
 .voiture {
   display: flex;
   align-items: center;
-  justify-content: center; /* Pour centrer aussi horizontalement */
-  height: 300px; /* Une hauteur est nécessaire sur le parent */
+  justify-content: center;
+  height: 300px;
   padding-top: 400px;
+}
+
+/* --- Formulaire : Conteneur --- */
+.form-container {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 30px; /* Espace généreux à l'intérieur */
+    background: var(--fond-carte);
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Ombre douce */
+}
+
+/* --- Formulaire : Groupes --- */
+.form-group {
+    display: flex;
+    flex-direction: column; /* Label au-dessus du champ */
+    gap: 6px; /* Espace entre label et input */
+    margin-bottom: 20px; /* Espace avant le prochain champ */
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--texte-principal);
+}
+
+/* --- Formulaire : Champs de saisie --- */
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="select"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--texte-principal);
+    border: 1px solid var(--texte-secondaire);
+    border-radius: 6px;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+/* Effet quand on clique dans le champ */
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+input[type="select"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--bordure-focus);
+    box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.2);
+}
+
+/* --- Formulaire : Boutons --- */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+input[type="submit"], 
+input[type="reset"] {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1; /* Les boutons prennent la même largeur */
+    transition: filter 0.2s ease;
+}
+
+input[type="submit"] {
+    background: var(--primaire);
+    color: white;
+}
+
+input[type="reset"] {
+    background: #e1e4e8;
+    color: var(--texte-principal);
+}
+
+input[type="submit"]:hover, 
+input[type="reset"]:hover {
+    filter: brightness(0.9);
 }

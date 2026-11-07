@@ -3,14 +3,19 @@
         <meta charset="UTF-8">
         <title>Menu</title>
         <link rel="stylesheet" href="style.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </head>
     <body class="menu"> 
-        <h1 class="menu_title">Menu</h1>
+        <h1 class="menu_title">Menu<i class="fa-solid fa-car"></i></h1>
+        <div class="section">
+            <h2 class="section_title">Tabeau de bord</h2>
+            <a href="accueil.html" target="contenu" class="menu-link">Accueil</a>
+        </div>
         <div class="section">
             <h2 class="section_title">Gestion des éleves</h2>
-            <a href="ajout_eleve.html" target="contenu" class="menu-link">Ajouter un élève</a>
-            <a href="........html" target="contenu" class="menu-link">Consultation élève</a>
-            <a href=".........html" target="contenu" class="menu-link">Calendrier élève</a>
+            <a href="ajout_eleve.html" target="contenu" class="menu-link"> <i class="bx bx-user-plus" ></i>  Ajouter un élève</a>
+            <a href="........html" target="contenu" class="menu-link"><i class="bx bx-user-circle" ></i>  Consultation élève</a>
+            <a href=".........html" target="contenu" class="menu-link"><i class="bx bx-calendar-alt" ></i>  Calendrier élève</a>
         </div>
         <div class="section">
             <h2 class="section_title">Gestion des thèmes</h2>
@@ -28,3 +33,21 @@
         </div>
     </body>
 </html>
+
+<script>
+    // Attend que la page soit totalement chargée
+    document.addEventListener('DOMContentLoaded', () => {
+        // Sélectionne tous les liens avec la classe menu-link
+        const liens = document.querySelectorAll('.menu-link');
+
+        liens.forEach(lien => {
+            lien.addEventListener('click', function() {
+                // 1. On retire la classe 'active' de TOUS les liens
+                liens.forEach(l => l.classList.remove('active'));
+                
+                // 2. On ajoute la classe 'active' uniquement à ce lien (this)
+                this.classList.add('active');
+            });
+        });
+    });
+</script>

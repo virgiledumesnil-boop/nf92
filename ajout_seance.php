@@ -8,54 +8,67 @@
     <body>
         <h1>Inscription à une séance</h1>
 
-        <form action="ajouter_seance.php" method="post">
+        <div class="form-container">
 
-        <?php
+            <form action="ajouter_seance.php" method="post">
 
-        $dbhost="tuxa.sme.utc";
-        $dbname="nf92a022";
-        $dbuser="nf92a022";
-        $dbpass="yqtLMEgACs67";
+                <div class="form-group">
+
+                <?php
+
+                $dbhost="tuxa.sme.utc";
+                $dbname="nf92a022";
+                $dbuser="nf92a022";
+                $dbpass="yqtLMEgACs67";
 
 
 
-        $connect=mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
+                $connect=mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
 
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        else {
-            mysqli_set_charset($connect,"utf8");
-
-            $requete = "SELECT `idtheme`,`nom` FROM themes WHERE 1";
-            $resultat = mysqli_query($connect,$requete);
-            if (!$resultat) {
-                die("Query failed: $requete" . mysqli_error($connect));
-            } 
-            else {
-                echo "<label for='theme'>Thèmes disponibles :</label><br>";
-                echo "<select name='theme' size='1'>";
-                while ($row = mysqli_fetch_assoc($resultat)) {
-                    if ($row['supprime'] == 0) {
-                        echo "<option value='" . $row['idtheme'] . "'>" . $row['nom'] . "</option>";
-                    }
+                if (!$connect) {
+                    die("Connection failed: " . mysqli_connect_error());
                 }
-                echo "</select><br>";
-            }
-        
-        }
-        
-        echo <<< HTML
-            
-            <label for="date">Date de la séance</label><br>
-            <input type="date" name="date" required><br><br>
+                else {
+                    mysqli_set_charset($connect,"utf8");
 
-            <label for="EffMax">Effectif maximum</label><br>
-            <input type="number" name="EffMax" min="1" required><br><br>
+                    $requete = "SELECT `idtheme`,`nom` FROM themes WHERE 1";
+                    $resultat = mysqli_query($connect,$requete);
+                    if (!$resultat) {
+                        die("Query failed: $requete" . mysqli_error($connect));
+                    } 
+                    else {
+                        echo "<label for='theme'>Thèmes disponibles :</label><br>";
+                        echo "<select name='theme' size='1'>";
+                        while ($row = mysqli_fetch_assoc($resultat)) {
+                            if ($row['supprime'] == 0) {
+                                echo "<option value='" . $row['idtheme'] . "'>" . $row['nom'] . "</option>";
+                            }
+                        }
+                        echo "</select><br>";
+                    }
+                
+                }
+                
+                echo <<< HTML
 
-            <input type="submit" value="Enregistrer">
-            <input type="reset" value="Réinitialiser"><br>
-        </form>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date de la séance</label>
+                        <input type="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="EffMax">Effectif maximum</label>
+                        <input type="number" name="EffMax" min="1" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <input type="submit" value="Enregistrer">
+                        <input type="reset" value="Réinitialiser">
+                    </div>
+            </form>
+        </div>
 
         HTML;
 

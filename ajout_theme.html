@@ -6,18 +6,29 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+
         <h1>Ajouter un thème</h1>
 
-        <form action="ajouter_theme.php" method="post">
+        <div class="form-container">
 
-            <label for="nom">Nom du thème:</label>
-            <input type="text" name="nom" id="nom" required><br>
+            <form action="ajouter_theme.php" method="POST">
 
-            <label for="description">Description:</label><br>         
-            <textarea name="description" id="description" rows="5" required></textarea><br>
+                <div class="form-group">
+                    <label for="nom">Nom du thème:</label>
+                    <input type="text" name="nom" id="nom" required>
+                </div>
 
-            <input type="submit" value="Enregistrer">
-            <input type="reset" value="Réinitialiser">
-        </form>
+                <div class="form-group">
+                    <label for="description">Description:</label>       
+                    <textarea name="description" id="description" rows="5" required></textarea>
+                </div>
+
+                <div class="form-action">
+                    <input type="submit" value="Enregistrer">
+                    <input type="reset" value="Réinitialiser">
+                </div>
+
+            </form>
+        </div>
     </body>
 </html>
