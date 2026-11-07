@@ -31,20 +31,20 @@
                 else {
                     mysqli_set_charset($connect,"utf8");
 
-                    $requete = "SELECT `idtheme`,`nom` FROM themes WHERE 1";
+                    $requete = "SELECT `idtheme`,`nom`,`supprime` FROM themes WHERE 1";
                     $resultat = mysqli_query($connect,$requete);
                     if (!$resultat) {
                         die("Query failed: $requete" . mysqli_error($connect));
                     } 
                     else {
-                        echo "<label for='theme'>Thèmes disponibles :</label><br>";
+                        echo "<label for='theme'>Thèmes disponibles :</label>";
                         echo "<select name='theme' size='1'>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
                             if ($row['supprime'] == 0) {
                                 echo "<option value='" . $row['idtheme'] . "'>" . $row['nom'] . "</option>";
                             }
                         }
-                        echo "</select><br>";
+                        echo "</select>";
                     }
                 
                 }

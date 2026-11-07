@@ -47,19 +47,33 @@
                               <div class='form-group'>";
                     }
 
-                    $requete = "SELECT `idseance`,`DateSeance`,`EffMax`,`Idtheme` FROM seances WHERE 1";
-                    $resultat = mysqli_query($connect,$requete);
+                    $query = "SELECT `idseance`,`DateSeance`,`EffMax`,`Idtheme` FROM seances WHERE 1";
+                    $resultat = mysqli_query($connect,$query);
                     if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
+                        die("Query failed: $query" . mysqli_error($connect));
                     } 
                     else {
                         echo "<label for='seance'>Séances disponibles :</label>";
                         echo "<select name='seance' size='1'>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
-                            $requete_theme = "SELECT `nom` FROM themes WHERE `idtheme` = '" . $row['Idtheme'] . "'";
-                            $resultat_theme = mysqli_query($connect,$requete_theme);
 
-                            echo "<option value='" . $row['idseance'] . "'> Séance du " . $row['DateSeance'] . " sur le theme " . mysqli_fetch_assoc($resultat_theme)['nom'] . " (" . $row['EffMax'] . " places)</option>";
+                            $idseance = $row['idseance'];
+
+                            $query_seance = "SELECT * FROM inscription WHERE `idseance` = $idseance";
+                            $result_seance = mysqli_query($connect,$query_seance);
+                            $nb_inscrit = mysqli_num_rows($result_seance);
+
+                            if (!($nb_inscrit >= $EffMax)) {
+
+                                $requete_theme = "SELECT `nom` FROM themes WHERE `idtheme` = '" . $row['Idtheme'] . "'";
+                                $resultat_theme = mysqli_query($connect,$requete_theme);
+
+                                echo "<option value='" . $row['idseance'] . "'> Séance du " . $row['DateSeance'] . " sur le theme " . mysqli_fetch_assoc($resultat_theme)['nom'] . " (" . $row['EffMax'] . " places)</option>";
+                                
+                            }
+
+                        
+                            
                         }
                         echo "</select>";
                         echo "</div>";
