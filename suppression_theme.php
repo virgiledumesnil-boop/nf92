@@ -10,7 +10,7 @@
 
         <div class="form-container">
 
-            <form action="supprimer_theme.php" method="post">
+            <form action="supprimer_theme.php" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce thème ? (vous pourrez le reactiver plus tard)');">
 
                 <div class="form-group">
 
@@ -51,14 +51,8 @@
 
                     </div>
 
-                    <div class="form-group">
-                        <label for="supprime">Êtes vous sûr de vouloir supprimer ce thème ?</label>
-                        <input type="checkbox" name="supprime" value="1"  required>
-                    </div>
-
                     <div class="form-actions">
-                        <input type="submit" value="Supprimer">
-                        <input type="reset" value="Réinitialiser">
+                        <input type="submit" style="background-color: #E63946;" value="Supprimer">
                     </div>
             </form>
         </div>

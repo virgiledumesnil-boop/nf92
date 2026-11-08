@@ -1,11 +1,12 @@
 :root {
-    --primaire: #E63946; /* Rouge auto-école dynamique */
+    --primaire: #0249E1; /* Rouge auto-école dynamique */
     --fond-page: #F5F6F8; /* Gris très clair (ton actuel) */
     --fond-carte: #FFFFFF; /* Blanc pur pour les formulaires */
     --texte-principal: #2B2D42; /* Bleu nuit presque noir, plus doux que #000 */
     --texte-secondaire: #8D99AE; /* Gris bleuté pour les labels et bordures */
     --bordure-focus: #457B9D; /* Bleu moyen pour le focus des champs */
-}
+    --supprime: #E63946;
+}  
 * {
     margin: 0;
     padding: 0;
@@ -165,6 +166,10 @@ select:focus {
     margin-top: 30px;
 }
 
+.form-supprimer {
+    background: var(--supprime);
+}
+
 input[type="submit"], 
 input[type="reset"] {
     padding: 12px 20px;
@@ -192,7 +197,7 @@ input[type="reset"]:hover {
 }
 
 /* Classe à rajouter sur un input quand il y a une erreur */
-input.erreur-champ, select.erreur-champ {
+input.erreur-champ, select.erreur-champ, textarea.erreur-c {
     border-color: #E63946 !important;
     background-color: #fff5f5;
 }
