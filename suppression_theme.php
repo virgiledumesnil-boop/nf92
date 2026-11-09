@@ -52,7 +52,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <input type="submit" style="background-color: #E63946;" value="Supprimer">
+                        <input type="submit" style="background-color: var(--supprime);" value="Supprimer">
                     </div>
             </form>
         </div>

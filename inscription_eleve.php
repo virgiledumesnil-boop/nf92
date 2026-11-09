@@ -7,22 +7,16 @@
     </head>
     <body>
         <h1>Inscrire un élève à une séance</h1>
-
         <div class="form-container">
-
             <form action="inscrire_eleve.php" method="post">
                 <div class="form-group">
 
                 <?php
 
-                $dbhost="tuxa.sme.utc";
-                $dbname="nf92a022";
-                $dbuser="nf92a022";
-                $dbpass="yqtLMEgACs67";
+                date_default_timezone_set('Europe/Paris');
+                $date = date('Y-m-d');
 
-
-
-                $connect=mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
+                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
 
                 if (!$connect) {
                     die("Connection failed: " . mysqli_connect_error());
@@ -37,7 +31,7 @@
                     } 
                     else {
                         echo "<label for='eleve'>Eleves disponibles :</label>";
-                        echo "<select name='eleve' size='1'>";
+                        echo "<select name='eleve' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
                             echo "<option value='" . $row['ideleve'] . "'>" . $row['prenom'] . " " . $row['nom'] . " naît le " . $row['dateNaiss'] . " Inscit le " . $row['dateInscription'] . "</option>";
                             
@@ -54,25 +48,35 @@
                     } 
                     else {
                         echo "<label for='seance'>Séances disponibles :</label>";
-                        echo "<select name='seance' size='1'>";
+                        echo "<select name='seance' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
 
                             $idseance = $row['idseance'];
+                            $EffMax = $row['EffMax'];
+                            $date_seance = $row['DateSeance'];
 
                             $query_seance = "SELECT * FROM inscription WHERE `idseance` = $idseance";
                             $result_seance = mysqli_query($connect,$query_seance);
-                            $nb_inscrit = mysqli_num_rows($result_seance);
+                            if (!$result_seance) {
+                                die("Query failed: $query_seance" . mysqli_error($connect));
+                            } 
+                            else {
+                                $nb_inscrit = mysqli_num_rows($result_seance);
+                                $places_restantes = $EffMax - $nb_inscrit;
 
-                            if (!($nb_inscrit >= $EffMax)) {
+                                if (($nb_inscrit < $EffMax) && ($date_seance>=$date)) {
 
-                                $requete_theme = "SELECT `nom` FROM themes WHERE `idtheme` = '" . $row['Idtheme'] . "'";
-                                $resultat_theme = mysqli_query($connect,$requete_theme);
+                                    $requete_theme = "SELECT `nom` FROM themes WHERE `idtheme` = '" . $row['Idtheme'] . "'";
+                                    $resultat_theme = mysqli_query($connect,$requete_theme);
+                                    if (!$resultat_theme) {
+                                        die("Query failed: $requete_theme" . mysqli_error($connect));
+                                    } 
+                                    else {
 
-                                echo "<option value='" . $row['idseance'] . "'> Séance du " . $row['DateSeance'] . " sur le theme " . mysqli_fetch_assoc($resultat_theme)['nom'] . " (" . $row['EffMax'] . " places)</option>";
-                                
+                                        echo "<option value='" . $row['idseance'] . "'> Séance du " . $row['DateSeance'] . " sur le theme " . mysqli_fetch_assoc($resultat_theme)['nom'] . " (" . $places_restantes . " places restantes)</option>";
+                                    }
+                                }
                             }
-
-                        
                             
                         }
                         echo "</select>";

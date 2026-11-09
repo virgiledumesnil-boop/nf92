@@ -23,14 +23,13 @@
 
             mysqli_set_charset($connect,"utf8");
 
-            if (!isset($_POST['idtheme']) || !isset($_POST['supprime'])) {
+            if (!isset($_POST['idtheme'])) {
                 echo "<h1>Erreur</h1>";
                 echo "<p>les données du formulaire ne sont pas définies.</p>";
             }
             else {
 
                 $idtheme = $_POST['idtheme'];
-                $supprime = $_POST['supprime'];
 
                 $requete = "SELECT `nom`,`supprime` FROM themes WHERE idtheme='$idtheme'";
                 $resultat = mysqli_query($connect,$requete);
@@ -45,28 +44,17 @@
                     echo "<p>Vous pouvez le réactiver à tout moment dans 'Ajouter un thème'.</p>";
                     echo "<p><a href='suppression_theme.php'>Retour à la page de suppression de thème</a></p>";
                 }
-                else{
+                else{ 
+                    $query = "UPDATE `themes` SET `supprime`= 1 WHERE idtheme = '$idtheme'";
+                    $result = mysqli_query($connect,$query);                
 
-                    if ($supprime != 1) {
-                        echo "<h1>Erreur</h1>";
-                        echo "<p>Vous devez cocher la case pour confirmer la suppression du thème.</p>";
-                        echo "<p><a href='suppression_theme.php'>Retour à la page de suppression de thème</a></p>";
+                    if (!$result) {
+                        die("Query failed: $query" . mysqli_error($connect));
                     } 
                     else {
-
-                        $query = "UPDATE `themes` SET `supprime`= 1 WHERE idtheme = '$idtheme'";
-                        $result = mysqli_query($connect,$query);                
-
-                        if (!$result) {
-                            die("Query failed: $query" . mysqli_error($connect));
-                        } 
-                        else {
-                            echo "<h1>Thème Supprimé avec succès</h1>";
-                            echo "<p>Le thème a été supprimé avec succès de la base de données.</p>";
-                        }
-
-                    
-                    }
+                        echo "<h1>Thème Supprimé avec succès</h1>";
+                        echo "<p>Le thème a été supprimé avec succès de la base de données.</p>";
+                    } 
                 }
             }
         }

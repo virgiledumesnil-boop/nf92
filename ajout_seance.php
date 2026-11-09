@@ -38,7 +38,7 @@
                     } 
                     else {
                         echo "<label for='theme'>Thèmes disponibles :</label>";
-                        echo "<select name='theme' size='1'>";
+                        echo "<select name='theme' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
                             if ($row['supprime'] == 0) {
                                 echo "<option value='" . $row['idtheme'] . "'>" . $row['nom'] . "</option>";

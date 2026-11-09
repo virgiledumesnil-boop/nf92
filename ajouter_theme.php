@@ -5,39 +5,6 @@ $description = isset($_POST['description']) ? $_POST['description'] : '';
 $erreur = false;
 $insertion_reussie = false;
 
-$connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-if ($connect) {
-    mysqli_set_charset($connect, "utf8");
-    
-    $nom_sec = mysqli_real_escape_string($connect, $nom);
-    
-    $query = "SELECT * FROM themes WHERE `nom`= '" . $nom ."'";
-    $result = mysqli_query($connect, $query);
-    if ($result) {
-        if(mysqli_num_rows($result) == 1) {
-            $row = mysqli_fetch_assoc($result);
-            if ($row['supprime']==0){
-                $erreur = true;
-                $erreur_type = "existe_deja";
-            }
-            else{
-                $query = "UPDATE themes SET `supprime`= 0, `descriptif`='$description' WHERE nom = '$nom'";
-                if (mysqli_query($connect, $query)) {
-                    $insertion_reussie = true;
-                    $insertion = "reactivation";
-                }
-                mysqli_close($connect);
-            }
-
-        }   
-        elseif(mysqli_num_row($result)>1){
-            $erreur = true;
-            $erreur_type = "plusieurs_memes_nom";
-        }
-    }
-    mysqli_close($connect);
-}
-
 if (empty($nom) || empty($description) ) {
 $erreur = true;
     if (empty($nom)){
@@ -54,6 +21,39 @@ if (!$erreur) {
         mysqli_set_charset($connect, "utf8");
         
         $nom_sec = mysqli_real_escape_string($connect, $nom);
+        
+        $query = "SELECT * FROM themes WHERE `nom`= '" . $nom ."'";
+        $result = mysqli_query($connect, $query);
+        if ($result) {
+            $num_row = mysqli_num_rows($result);
+            if($num_row == 1) {
+                $row = mysqli_fetch_assoc($result);
+                if ($row['supprime']==0){
+                    $erreur = true;
+                    $erreur_type = "existe_deja";
+                }
+                else{
+                    $query = "UPDATE themes SET `supprime`= 0, `descriptif`='$description' WHERE nom = '$nom'";
+                    if (mysqli_query($connect, $query)) {
+                        $insertion_reussie = true;
+                        $insertion = "reactivation";
+                    }
+                }
+            }   
+            elseif($num_row>1){
+                $erreur = true;
+                $erreur_type = "plusieurs_memes_nom";
+            }
+        }
+        mysqli_close($connect);
+    }
+}
+if (!$erreur & !$insertion_reussie) {
+    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+    if ($connect) {
+        mysqli_set_charset($connect, "utf8");
+        
+        $nom_sec = mysqli_real_escape_string($connect, $nom);
         $description_sec = mysqli_real_escape_string($connect, $description);
         
         $query = "INSERT INTO themes (idtheme, nom, supprime, descriptif) VALUES (NULL, '$nom_sec', '0' ,'$description_sec')";
@@ -65,7 +65,6 @@ if (!$erreur) {
     }
 }
 
-echo "$erreur_type"
 ?>
 
 <DOCTYPE html>
@@ -94,7 +93,7 @@ echo "$erreur_type"
 
                     <div class="form-group">
                         <label for="description">Description:</label>       
-                        <textarea <?php if($erreur_type == "description"){echo "class='erreur-champ'";}?> name="description" id="description" rows="5" velue="<?php echo htmlspecialchars($description); ?>" required></textarea>
+                        <textarea <?php if($erreur_type == "description"){echo "class='erreur-champ'";}?> name="description" id="description" rows="5" required><?php echo htmlspecialchars($description); ?></textarea>
                         <?php if($erreur_type == "description"){echo "<span class='texte-erreur'>Veuillez rentrer une description</span>";}?>
                     </div>
 
@@ -108,13 +107,11 @@ echo "$erreur_type"
     <?php elseif ($insertion_reussie): ?>
         <h1>Opération réussie</h1>
         <div class="resultat-carte">
-            <p><strong>Nom :</strong> <?php echo htmlspecialchars($nom); ?></p>
-            <p><strong>Prénom :</strong> <?php echo htmlspecialchars($prenom); ?></p>
-            <p><strong>Né le :</strong> <?php echo $date_naissance; ?></p>
-            <p><strong>Âge :</strong> <?php echo $age->y; ?> ans</p>
-            <p><strong>Inscrit le :</strong> <?php echo $date; ?></p>
+            <p><strong>Nom du theme :</strong> <?php echo htmlspecialchars($nom); ?></p>
+            <p><strong>Description :</strong> <?php echo htmlspecialchars($description); ?></p>
             <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
-            <p style="color: #457B9D; font-weight: bold;">L'élève a été ajouté avec succès à la base de données.</p>
+            <?php if($insertion == "creation"){echo "<p style='color: #457B9D; font-weight: bold;'>Le theme a été ajouté avec succès à la base de données.</p>";}; ?>
+            <?php if($insertion == "reactivation"){echo"<p style ='color: #457B9D; font-weight: bold;'>Le theme a été réactivé avec succès à la base de données.</p>";}; ?>
         </div>
     <?php else: ?>
         <h1>Erreur technique</h1>
