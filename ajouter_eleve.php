@@ -2,11 +2,15 @@
 $nom = isset($_POST['nom']) ? $_POST['nom'] : '';
 $prenom = isset($_POST['prenom']) ? $_POST['prenom'] : '';
 $date_naissance = isset($_POST['date_naissance']) ? $_POST['date_naissance'] : '';
+$confirme = isset($_POST['confirme']) ? $_POST['confirme'] : '';
+if($confirme=="False"){$confirme=False;}elseif($confirme=="True"){$confirme=True;};
+
 
 date_default_timezone_set('Europe/Paris');
 $date = date('Y-m-d');
 
 $erreur = false;
+$erreur_type = false;
 
 $age = date_diff(date_create($date_naissance),date_create($date));
 
@@ -32,12 +36,28 @@ $erreur = true;
     }
     elseif ($age->y > 100){
         $erreur_type="vieux";
+    }   
+}
+
+$homonyme=false;
+if (!$erreur && !$confirme) {
+    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+    if ($connect) {
+        mysqli_set_charset($connect, "utf8");
+        
+        $query = "SELECT * FROM eleves WHERE nom='$nom' AND prenom='$prenom'";
+        $result = mysqli_query($connect, $query);
+        if ($result) {
+            if (mysqli_num_rows($result)>0)
+            $homonyme = True;
+        }
+        mysqli_close($connect);
     }
-    
 }
 
 $insertion_reussie = false;
-if (!$erreur) {
+
+if (!$erreur && !$homonyme) {
     $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
     if ($connect) {
         mysqli_set_charset($connect, "utf8");
@@ -63,9 +83,10 @@ if (!$erreur) {
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <?php if ($erreur): ?>
+        <?php if ($erreur || $homonyme): ?>
 
-            <h1>Corriger les informations</h1>
+            <?php if($erreur){echo "<h1>Corriger les informations</h1>";}; ?>
+            <?php if($homonyme){echo "<h1>Confirmer les informations</h1>";}; ?>
             <div class="form-container">
                 <form action="ajouter_eleve.php" method="POST">
 
@@ -90,10 +111,17 @@ if (!$erreur) {
                         <?php if($erreur_type=="futur"){echo"<span class='texte-erreur'>Veuillez saisir une date anterieure a aujourdhui</span>";} ?>
                         <?php if($erreur_type=="futur2"){echo"<span class='texte-erreur'>Veuillez saisir une date à 8 chiffres</span>";} ?>
                     </div>
+                    <?php if($erreur){echo "<input type='hidden' name='confirme' value='False'>";} ?>
+                    <?php if($homonyme){echo "<input type='hidden' name='confirme' value='True'>";} ?>
 
                     <div class="form-actions">
-                        <input type="submit" value="Corriger le formulaire">
+                        <input type="submit" value="<?php if($erreur){echo"Corriger les informations";}else{echo "Confirmer l'homonyme";}; ?>">
                     </div>
+
+                    <div>
+                        <?php if($homonyme){echo "<span class='texte-erreur'>Une personne avec le même nom existe déjà dans la base de donnée voulez vous continuer ? </span>";}; ?>
+                    </div>
+                    <?php echo"$erreur.$confirme.$insertion_reussie.$homonyme" ?> 
 
                 </form>
             </div>

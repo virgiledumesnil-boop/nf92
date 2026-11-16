@@ -49,13 +49,15 @@
                 
                 }
                 
-                echo <<< HTML
+                date_default_timezone_set('Europe/Paris');
+                echo "</div>";
+                echo "<div class='form-group'>";
+                echo "<label for='date'>Date de la séance</label>";
+                echo "<input type='date' name='date' min='" . date('Y-m-d') . "' required>";
 
-                    </div>
+                    echo <<< HTML
 
-                    <div class="form-group">
-                        <label for="date">Date de la séance</label>
-                        <input type="date" name="date" required>
+                        
                     </div>
 
                     <div class="form-group">

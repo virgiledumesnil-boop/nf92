@@ -32,6 +32,22 @@ if (!$erreur) {
     if ($connect) {
         mysqli_set_charset($connect, "utf8");
         
+        $query = "SELECT * FROM seances WHERE 'DateSeance'='$date' AND 'Idtheme'='$idtheme'";
+        $result = mysqli_query($connect, $query);
+        if ($result) {
+            if (mysqli_num_rows($result)>0)
+            $erreur = true;
+            $erreur_type = "existe_deja";
+        }
+        mysqli_close($connect);
+    }
+}
+
+if (!$erreur) {
+    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+    if ($connect) {
+        mysqli_set_charset($connect, "utf8");
+        
         $EffMax_sec = mysqli_real_escape_string($connect, $EffMax);
         
         $query = "INSERT INTO seances (idseance, DateSeance, EffMax, Idtheme) VALUES (NULL, '$date', '$EffMax_sec' ,'$idtheme')";
@@ -101,15 +117,16 @@ if (!$erreur) {
 
                     <div class="form-group">
                         <label for="date" >Date de la séance</label>
-                        <input type="date"  name="date" id="date" value="<?php echo htmlspecialchars($date); ?>" <?php if(($erreur_type=="date") || ($erreur_type == "passé") || ($erreur_type == "futur")){echo "class='erreur-champ'";} ?> required>
+                        <input type="date"  name="date" id="date" value="<?php echo htmlspecialchars($date); ?>" <?php if(($erreur_type=="date") || ($erreur_type == "passé") || ($erreur_type == "futur") || ($erreur_type=="existe_deja")){echo "class='erreur-champ'";} ?> required>
                         <?php if($erreur_type=="date"){echo "<span class='texte-erreur'>Veuillez rentrer une date</span>";} ?>
                         <?php if($erreur_type=="passé"){echo "<span class='texte-erreur'>La séance ne peut pas être dans le passé</span>";} ?>
                         <?php if($erreur_type=="futur"){echo "<span class='texte-erreur'>Veuillez rentrer une date à 8 chiffres</span>";} ?>
+                        <?php if($erreur_type=="existe_deja"){echo "<span class='texte-erreur'>Une séance existe déjà le même jour sur le même thème</span>";} ?>
                     </div>
 
                     <div class="form-group">
                         <label for="EffMax">Effectif maximum</label>
-                        <input type="number" name="EffMax" id="EffMax" value="<?php echo htmlspecialcharts($EffMax) ?>" min="1" <?php if($erreur_type=="EffMax"){echo "class='erreur-champ'";} ?> required>
+                        <input type="number" name="EffMax" id="EffMax" value="<?php echo "$EffMax" ?>" min="1" <?php if($erreur_type=="EffMax"){echo "class='erreur-champ'";} ?> required>
                         <?php if($erreur_type=="EffMax"){echo "<span class='texte-erreur'>Veuillez rentrer une date à 8 chiffres</span>";} ?>
                     </div>
 
