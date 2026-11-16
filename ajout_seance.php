@@ -2,11 +2,11 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>Inscription à une séance</title>
+        <title>Ajout d'une séance</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Inscription à une séance</h1>
+        <h1>Ajout d'une séance</h1>
 
         <div class="form-container">
 

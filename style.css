@@ -159,45 +159,75 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.2);
 }
 
-/* --- Formulaire : Boutons --- */
-.form-actions {
+/* --- Formulaire & Cartes : Conteneurs de boutons --- */
+.form-actions,
+.back-home {
     display: flex;
     gap: 10px;
     margin-top: 30px;
 }
 
-.form-supprimer {
-    background: var(--supprime);
-}
-
+/* --- Base commune à TOUS les boutons (input et liens <a>) --- */
 input[type="submit"], 
-input[type="reset"] {
+input[type="reset"],
+.valider,
+.continuer {
+    /* Centrage parfait du texte (même sur 2 lignes) */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    /* Dimensions et espacements */
+    flex: 1; /* Même largeur pour les deux boutons */
     padding: 12px 20px;
     border: none;
     border-radius: 6px;
+
+    /* Typographie identique entre <input> et <a> */
+    font-family: inherit;
+    font-size: 0.95rem;
     font-weight: bold;
+    text-decoration: none;
+
     cursor: pointer;
-    flex: 1; /* Les boutons prennent la même largeur */
-    transition: filter 0.2s ease;
+    transition: filter 0.2s ease, transform 0.1s ease;
 }
 
-input[type="submit"] {
+input[type="submit"],
+.valider {
     background: var(--primaire);
     color: white;
 }
 
-input[type="reset"] {
+input[type="reset"],
+.continuer {
     background: #e1e4e8;
     color: var(--texte-principal);
 }
 
+input[type="submit"].form-supprimer,
+.form-supprimer {
+    background: var(--supprime);
+    color: white;
+}
+
 input[type="submit"]:hover, 
-input[type="reset"]:hover {
+input[type="reset"]:hover,
+.valider:hover,
+.continuer:hover {
     filter: brightness(0.9);
 }
 
+input[type="submit"]:active, 
+input[type="reset"]:active,
+.valider:active,
+.continuer:active {
+    transform: scale(0.98);
+}
+
 /* Classe à rajouter sur un input quand il y a une erreur */
-input.erreur-champ, select.erreur-champ, textarea.erreur-c {
+input.erreur-champ, select.erreur-champ, textarea.erreur-champ {
     border-color: #E63946 !important;
     background-color: #fff5f5;
 }
