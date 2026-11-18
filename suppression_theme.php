@@ -38,9 +38,9 @@
                     } 
                     else {
                         echo "<label for='theme'>Thèmes disponibles :</label>";
-                        echo "<select name='idtheme' size='1'>";
+                        echo "<select name='idtheme' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
-                            echo "<option value='" . $row['idtheme'] . "'>" . $row['nom'] . "</option>";
+                            echo "<option value='" . $row['idtheme'] . "'>" . htmlspecialchars($row['nom']) . "</option>";
                         }
                         echo "</select>";
                     }
@@ -57,7 +57,7 @@
             </form>
         </div>
 
-        HTML;
+HTML;
 
             
     mysqli_close($connect);

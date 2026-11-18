@@ -1,5 +1,5 @@
 <?php
-$ideleve = isset($_POST['theme']) ? $_POST['theme'] : '';
+$ideleve = isset($_POST['theme']) ? interval($_POST['theme']) : '';
 date_default_timezone_set('Europe/Paris');
 $date_ajd = date('Y-m-d');
 
@@ -38,7 +38,7 @@ if (!$erreur) {
 
 ?>
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
@@ -77,7 +77,7 @@ if (!$erreur) {
                         echo "<select name='theme' size='1' $classe_select required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
                             $selected = ($row['ideleve']==$ideleve) ? "selected" : "";
-                            echo "<option value='" . $row['ideleve'] . "' $selected>" . $row['prenom'] . " " . $row['nom'] . " né le " . $row['dateNaiss'] . "</option>";
+                            echo "<option value='" . $row['ideleve'] . "' $selected>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
                         }
                         echo "</select>";
                     }
@@ -96,31 +96,31 @@ if (!$erreur) {
                     </div>
             </form>
         </div>
-        </body>
-    <?php elseif ($lecture_reussie): ?>
-        <h1>Consultation de l'élève</h1>
-        <div class="resultat-carte">
-            <?php 
-                $age = date_diff(date_create($date_naiss),date_create($date_ajd));
-            ?>
-            <p><strong>Prénom :</strong> <?php echo htmlspecialchars($prenom); ?></p>
-            <p><strong>Nom :</strong> <?php echo htmlspecialchars($nom); ?></p>
-            <p><strong>Date de naissance :</strong> <?php echo htmlspecialchars($date_naiss); ?></p>
-            <p><strong>Âge :</strong> <?php echo htmlspecialchars($age->y); ?></p>
-            <p><strong>Date d'Inscription :</strong> <?php echo htmlspecialchars($date_ins); ?></p>
+        <?php elseif ($lecture_reussie): ?>
+            <h1>Consultation de l'élève</h1>
+            <div class="resultat-carte">
+                <?php 
+                    $age = date_diff(date_create($date_naiss),date_create($date_ajd));
+                ?>
+                <p><strong>Prénom :</strong> <?php echo htmlspecialchars($prenom); ?></p>
+                <p><strong>Nom :</strong> <?php echo htmlspecialchars($nom); ?></p>
+                <p><strong>Date de naissance :</strong> <?php echo htmlspecialchars($date_naiss); ?></p>
+                <p><strong>Âge :</strong> <?php echo htmlspecialchars($age->y); ?></p>
+                <p><strong>Date d'Inscription :</strong> <?php echo htmlspecialchars($date_ins); ?></p>
 
-            <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
-            <p style="color: #457B9D; font-weight: bold;">Voici l'élève que vous avez sélectioné</p>
-            <div class="back-home">
-                <a href="consultation_eleve.php" target="contenu" class="valider">Consulter un autre élève</a>
-                <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
+                <p style="color: #457B9D; font-weight: bold;">Voici l'élève que vous avez sélectioné</p>
+                <div class="back-home">
+                    <a href="consultation_eleve.php" target="contenu" class="valider">Consulter un autre élève</a>
+                    <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                </div>
             </div>
-        </div>
-    <?php else: ?>
-        <h1>Erreur technique</h1>
-        <div class="resultat-carte" style="border-left-color: #E63946;">
-            <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
-            <p>Veuillez contacter l'administrateur.</p>
-        </div>
-    <?php endif; ?>
+        <?php else: ?>
+            <h1>Erreur technique</h1>
+            <div class="resultat-carte" style="border-left-color: #E63946;">
+                <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
+                <p>Veuillez contacter l'administrateur.</p>
+            </div>
+        <?php endif; ?>
+    </body>
 </html>

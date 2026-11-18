@@ -1,5 +1,5 @@
 <?php
-$idtheme = isset($_POST['theme']) ? $_POST['theme'] : '';
+$idtheme = isset($_POST['theme']) ? interval($_POST['theme']) : 0;
 $date = isset($_POST['date']) ? $_POST['date'] : '';
 $EffMax = isset($_POST['EffMax']) ? $_POST['EffMax'] : '';
 date_default_timezone_set('Europe/Paris');
@@ -8,7 +8,7 @@ $date_ajd = date('Y-m-d');
 $erreur = false;
 $insertion_reussie = false;
 
-if (empty($idtheme) || empty($date) || empty($EffMax) || ($date_ajd>$date) || (strlen($date) !== 10)) {
+if (empty($idtheme) || empty($date) || empty($EffMax) || ($date_ajd>$date) || (strlen($date) !== 10) || intval($EffMax) < 1) {
 $erreur = true;
     if (empty($idtheme)){
         $erreur_type="theme";
@@ -24,20 +24,23 @@ $erreur = true;
     }    
     elseif (strlen($date) !== 10){
         $erreur_type="futur";
-    }    
+    }
+    elseif (intval($EffMax) < 1){
+        $erreur_type="Effectif_négatif";
+    }
 }
 
 if (!$erreur) {
     $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
     if ($connect) {
         mysqli_set_charset($connect, "utf8");
-        
-        $query = "SELECT * FROM seances WHERE 'DateSeance'='$date' AND 'Idtheme'='$idtheme'";
+        $query = "SELECT * FROM seances WHERE `DateSeance`='$date' AND `Idtheme`='$idtheme'";
         $result = mysqli_query($connect, $query);
         if ($result) {
-            if (mysqli_num_rows($result)>0)
+            if (mysqli_num_rows($result)>0){
             $erreur = true;
             $erreur_type = "existe_deja";
+            }
         }
         mysqli_close($connect);
     }
@@ -61,7 +64,7 @@ if (!$erreur) {
 
 ?>
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
@@ -126,8 +129,9 @@ if (!$erreur) {
 
                     <div class="form-group">
                         <label for="EffMax">Effectif maximum</label>
-                        <input type="number" name="EffMax" id="EffMax" value="<?php echo "$EffMax" ?>" min="1" <?php if($erreur_type=="EffMax"){echo "class='erreur-champ'";} ?> required>
-                        <?php if($erreur_type=="EffMax"){echo "<span class='texte-erreur'>Veuillez rentrer une date à 8 chiffres</span>";} ?>
+                        <input type="number" name="EffMax" id="EffMax" value="<?php echo "$EffMax" ?>" min="1" <?php if($erreur_type=="EffMax" || $erreur_type="Effectif_négatif"){echo "class='erreur-champ'";} ?> required>
+                        <?php if($erreur_type=="EffMax"){echo "<span class='texte-erreur'>veuillez rentrer un effectif max</span>";} ?>
+                        <?php if($erreur_type="Effectif_négatif"){echo "<span class='text-erreur'>L'effectif max doit etre positif et non nul";} ?>
                     </div>
 
                     <div class="form-actions">
@@ -136,34 +140,35 @@ if (!$erreur) {
                     </div>
             </form>
         </div>
-        </body>
-    <?php elseif ($insertion_reussie): ?>
-        <h1>Opération réussie</h1>
-        <div class="resultat-carte">
-            <?php 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
-                else {
-                    $requete = "SELECT `nom` FROM themes WHERE idtheme='$idtheme'";
-                    $resultat = mysqli_query($connect,$requete);
-                    $theme = mysqli_fetch_assoc($resultat)['nom'];
-                    mysqli_close($connect);
-                }
+        <?php elseif ($insertion_reussie): ?>
+            <h1>Opération réussie</h1>
+            <div class="resultat-carte">
+                <?php 
+                    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                    mysqli_set_charset($connect, "utf8");
+                    if (!$connect) {
+                        die("Connection failed: " . mysqli_connect_error());
+                    }
+                    else {
+                        $requete = "SELECT `nom` FROM themes WHERE idtheme='$idtheme'";
+                        $resultat = mysqli_query($connect,$requete);
+                        $theme = mysqli_fetch_assoc($resultat)['nom'];
+                        mysqli_close($connect);
+                    }
 
-            ?>
-            <p><strong>Theme :</strong> <?php echo htmlspecialchars($theme); ?></p>
-            <p><strong>Date :</strong> <?php echo htmlspecialchars($date); ?></p>
-            <p><strong>Effectif maximum :</strong> <?php echo htmlspecialchars($EffMax); ?></p>
-            <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
-            <p style="color: #457B9D; font-weight: bold;">La séance a été ajouté avec succès à la base de données.</p>
-        </div>
-    <?php else: ?>
-        <h1>Erreur technique</h1>
-        <div class="resultat-carte" style="border-left-color: #E63946;">
-            <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
-            <p>Veuillez contacter l'administrateur.</p>
-        </div>
-    <?php endif; ?>
+                ?>
+                <p><strong>Theme :</strong> <?php echo htmlspecialchars($theme); ?></p>
+                <p><strong>Date :</strong> <?php echo htmlspecialchars($date); ?></p>
+                <p><strong>Effectif maximum :</strong> <?php echo htmlspecialchars($EffMax); ?></p>
+                <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
+                <p style="color: #457B9D; font-weight: bold;">La séance a été ajouté avec succès à la base de données.</p>
+            </div>
+        <?php else: ?>
+            <h1>Erreur technique</h1>
+            <div class="resultat-carte" style="border-left-color: #E63946;">
+                <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
+                <p>Veuillez contacter l'administrateur.</p>
+            </div>
+        <?php endif; ?>
+    </body>
 </html>

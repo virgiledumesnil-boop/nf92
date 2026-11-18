@@ -12,8 +12,6 @@ $date = date('Y-m-d');
 $erreur = false;
 $erreur_type = false;
 
-$age = date_diff(date_create($date_naissance),date_create($date));
-
 if (empty($nom) || empty($prenom) || empty($date_naissance) || ($age->y < 15) || ($age->y > 100) || ($date_naissance > $date) || (strlen($date_naissance) !== 10)) {
 $erreur = true;
     if (empty($nom)){
@@ -39,13 +37,20 @@ $erreur = true;
     }   
 }
 
+if(!$erreur){
+    $age = date_diff(date_create($date_naissance),date_create($date));
+}
+
 $homonyme=false;
 if (!$erreur && !$confirme) {
     $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
     if ($connect) {
         mysqli_set_charset($connect, "utf8");
+
+        $nom_sec = mysqli_real_escape_string($nom);
+        $prenom_sec = mysqli_real_escape_string($prenom);
         
-        $query = "SELECT * FROM eleves WHERE nom='$nom' AND prenom='$prenom'";
+        $query = "SELECT * FROM eleves WHERE nom='$nom_sec' AND prenom='$prenom_sec'";
         $result = mysqli_query($connect, $query);
         if ($result) {
             if (mysqli_num_rows($result)>0)
@@ -75,7 +80,7 @@ if (!$erreur && !$homonyme) {
 
 ?>
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
@@ -121,27 +126,26 @@ if (!$erreur && !$homonyme) {
                     <div>
                         <?php if($homonyme){echo "<span class='texte-erreur'>Une personne avec le même nom existe déjà dans la base de donnée voulez vous continuer ? </span>";}; ?>
                     </div>
-                    <?php echo"$erreur.$confirme.$insertion_reussie.$homonyme" ?> 
 
                 </form>
             </div>
-        </body>
-    <?php elseif ($insertion_reussie): ?>
-        <h1>Opération réussie</h1>
-        <div class="resultat-carte">
-            <p><strong>Nom :</strong> <?php echo htmlspecialchars($nom); ?></p>
-            <p><strong>Prénom :</strong> <?php echo htmlspecialchars($prenom); ?></p>
-            <p><strong>Né le :</strong> <?php echo $date_naissance; ?></p>
-            <p><strong>Âge :</strong> <?php echo $age->y; ?> ans</p>
-            <p><strong>Inscrit le :</strong> <?php echo $date; ?></p>
-            <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
-            <p style="color: #457B9D; font-weight: bold;">L'élève a été ajouté avec succès à la base de données.</p>
-        </div>
-    <?php else: ?>
-        <h1>Erreur technique</h1>
-        <div class="resultat-carte" style="border-left-color: #E63946;">
-            <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
-            <p>Veuillez contacter l'administrateur.</p>
-        </div>
-    <?php endif; ?>
+        <?php elseif ($insertion_reussie): ?>
+            <h1>Opération réussie</h1>
+            <div class="resultat-carte">
+                <p><strong>Nom :</strong> <?php echo htmlspecialchars($nom); ?></p>
+                <p><strong>Prénom :</strong> <?php echo htmlspecialchars($prenom); ?></p>
+                <p><strong>Né le :</strong> <?php echo $date_naissance; ?></p>
+                <p><strong>Âge :</strong> <?php echo $age->y; ?> ans</p>
+                <p><strong>Inscrit le :</strong> <?php echo $date; ?></p>
+                <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
+                <p style="color: #457B9D; font-weight: bold;">L'élève a été ajouté avec succès à la base de données.</p>
+            </div>
+        <?php else: ?>
+            <h1>Erreur technique</h1>
+            <div class="resultat-carte" style="border-left-color: #E63946;">
+                <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
+                <p>Veuillez contacter l'administrateur.</p>
+            </div>
+        <?php endif; ?>
+    </body>
 </html>

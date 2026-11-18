@@ -3,8 +3,8 @@
 date_default_timezone_set('Europe/Paris');
 $date = date('Y-m-d');
 
-$idseance = isset($_POST['seance']) ? $_POST['seance'] : '';
-$ideleve = isset($_POST['eleve']) ? $_POST['eleve'] : '';
+$idseance = isset($_POST['seance']) ? interval($_POST['seance']) : '';
+$ideleve = isset($_POST['eleve']) ? interval($_POST['eleve']) : '';
 
 $erreur = false;
 $insertion_reussie = false;
@@ -19,6 +19,32 @@ $erreur = true;
     elseif (empty($ideleve)){
         $erreur_type="eleve";
     }     
+}
+
+if (!$erreur) {
+    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+    if ($connect) {
+        mysqli_set_charset($connect, "utf8");
+        
+        $query = "SELECT * FROM seances WHERE `idseance`= $idseance";
+        $result = mysqli_query($connect, $query);
+        if ($result) {
+            $EffMax = mysqli_fetch_assoc($result)['EffMax'];
+        }
+        $query = "SELECT * FROM inscription WHERE `idseance`= $idseance";
+        $result = mysqli_query($connect, $query);
+        if ($result) {
+            $nb_inscrit = mysqli_num_rows($result);
+        }
+
+        if($EffMax <= $nb_inscrit){
+            $erreur = TRUE;
+            $erreur_type = "plus_de_place";
+        }
+
+
+        mysqli_close($connect);
+    }
 }
 
 if (!$erreur) {
@@ -54,7 +80,7 @@ if (!$erreur) {
 
 ?>
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
@@ -87,15 +113,17 @@ if (!$erreur) {
                     } 
                     else {
                         echo "<label for='eleve'>Eleves disponibles :</label>";
-                        $classe_select = ($erreur_type == "eleve" || $erreur_type == "existe_deja") ? "class='erreur-champ'" : "";
+                        $classe_select = ($erreur_type == "eleve" || $erreur_type == "existe_deja" || $erreur_type == "plus_de_place") ? "class='erreur-champ'" : "";
                         echo "<select name='eleve' size='1' $classe_select required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
                             $selected = ($row['ideleve']==$ideleve) ? "selected" : "";
-                            echo "<option value='" . $row['ideleve'] . "' $selected>" . $row['prenom'] . " " . $row['nom'] . " naît le " . $row['dateNaiss'] . " Inscit le " . $row['dateInscription'] . "</option>";
+                            echo "<option value='" . $row['ideleve'] . "' $selected>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " naît le " . htmlspecialchars($row['dateNaiss']) . " Inscit le " . htmlspecialchars($row['dateInscription']) . "</option>";
                             
                         }
                         echo "</select>";
                         if ($erreur_type == "eleve"){echo "<span class='texte-erreur'>Veuillez choisir un élève</span>";}
+                        if ($erreur_type == "existe_deja"){echo "<span class='texte-erreur'>l'élève est deja inscrit à cette séance</span>";}
+                        if ($erreur_type == "plus_de_place"){echo "<span class='texte-erreur'>La séance n'as plus de place</span>";}
                         echo "</div>";
                         echo "<div class='form-group'>";
                     }
@@ -134,8 +162,9 @@ if (!$erreur) {
                                         die("Query failed: $requete_theme" . mysqli_error($connect));
                                     } 
                                     else {
+                                        $theme = mysqli_fetch_assoc($resultat_theme);
 
-                                        echo "<option value='" . $row['idseance'] . "' $selected> Séance du " . $row['DateSeance'] . " sur le theme " . mysqli_fetch_assoc($resultat_theme)['nom'] . " (" . $places_restantes . " places restantes)</option>";
+                                        echo "<option value='" . $row['idseance'] . "' $selected> Séance du " . htmlspecialchars($row['DateSeance']) . " sur le theme " . htmlspecialchars($theme['nom']) . " (" . htmlspecialchars($places_restantes) . " places restantes)</option>";
                                     }
                                 }
                             }
@@ -158,46 +187,48 @@ if (!$erreur) {
             </form>
 
         </div>
-        </body>
-    <?php elseif ($insertion_reussie): ?>
-        <h1>Opération réussie</h1>
-        <div class="resultat-carte">
+        <?php elseif ($insertion_reussie): ?>
+            <h1>Opération réussie</h1>
+            <div class="resultat-carte">
 
 
-            <?php 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                <?php 
+                    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                    mysqli_set_charset($connect,"utf8");
 
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
-                else {
-                    $query_theme = "SELECT `nom` FROM themes WHERE idtheme=(SELECT `idtheme` FROM seances WHERE `idseance`=$idseance)";
-                    $result_theme = mysqli_query($connect,$query_theme);
-                    $theme = mysqli_fetch_assoc($result_theme)['nom'];
-                    $query_date = "SELECT `DateSeance` FROM seances WHERE idseance=$idseance";
-                    $result_date = mysqli_query($connect,$query_date);
-                    $date_seance= mysqli_fetch_assoc($result_date)['DateSeance'];
-                    $query_eleve = "SELECT `nom`,`prenom`,`dateNaiss` FROM eleves WHERE ideleve=$ideleve";
-                    $result_eleve = mysqli_query($connect,$query_eleve);
-                    $eleve = mysqli_fetch_assoc($result_eleve);
-                    $nom = $eleve['nom'];
-                    $prenom = $eleve['prenom'];
-                    $date_naissance = $eleve['dateNaiss'];
-                }
+                    if (!$connect) {
+                        die("Connection failed: " . mysqli_connect_error());
+                    }
+                    else {
+                        $query_theme = "SELECT `nom` FROM themes WHERE idtheme=(SELECT `idtheme` FROM seances WHERE `idseance`=$idseance)";
+                        $result_theme = mysqli_query($connect,$query_theme);
+                        $theme = mysqli_fetch_assoc($result_theme)['nom'];
+                        $query_date = "SELECT `DateSeance` FROM seances WHERE idseance=$idseance";
+                        $result_date = mysqli_query($connect,$query_date);
+                        $date_seance= mysqli_fetch_assoc($result_date)['DateSeance'];
+                        $query_eleve = "SELECT `nom`,`prenom`,`dateNaiss` FROM eleves WHERE ideleve=$ideleve";
+                        $result_eleve = mysqli_query($connect,$query_eleve);
+                        $eleve = mysqli_fetch_assoc($result_eleve);
+                        $nom = $eleve['nom'];
+                        $prenom = $eleve['prenom'];
+                        $date_naissance = $eleve['dateNaiss'];
+                        mysqli_close($connect);
+                    }
 
-            ?>
+                ?>
 
-            <p><strong>Theme :</strong> <?php echo htmlspecialchars($theme); ?></p>
-            <p><strong>Date :</strong> <?php echo htmlspecialchars($date_seance); ?></p>
-            <p><strong>Eleve :</strong> <?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom) . " né le $date_naissance" ; ?></p>
-            <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
-            <p style="color: #457B9D; font-weight: bold;">L'élève a été inscrit avec succès à la séance.</p>
-        </div>
-    <?php else: ?>
-        <h1>Erreur technique</h1>
-        <div class="resultat-carte" style="border-left-color: #E63946;">
-            <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
-            <p>Veuillez contacter l'administrateur.</p>
-        </div>
-    <?php endif; ?>
+                <p><strong>Theme :</strong> <?php echo htmlspecialchars($theme); ?></p>
+                <p><strong>Date :</strong> <?php echo htmlspecialchars($date_seance); ?></p>
+                <p><strong>Eleve :</strong> <?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom) . " né le $date_naissance" ; ?></p>
+                <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
+                <p style="color: #457B9D; font-weight: bold;">L'élève a été inscrit avec succès à la séance.</p>
+            </div>
+        <?php else: ?>
+            <h1>Erreur technique</h1>
+            <div class="resultat-carte" style="border-left-color: #E63946;">
+                <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
+                <p>Veuillez contacter l'administrateur.</p>
+            </div>
+        <?php endif; ?>
+    </body>
 </html>

@@ -41,7 +41,7 @@
                         echo "<select name='theme' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
                             if ($row['supprime'] == 0) {
-                                echo "<option value='" . $row['idtheme'] . "'>" . $row['nom'] . "</option>";
+                                echo "<option value='" . $row['idtheme'] . "'>" . htmlspecialchars($row['nom']) . "</option>";
                             }
                         }
                         echo "</select>";
@@ -72,7 +72,7 @@
             </form>
         </div>
 
-        HTML;
+HTML;
 
             
     mysqli_close($connect);

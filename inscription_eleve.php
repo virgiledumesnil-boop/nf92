@@ -33,7 +33,7 @@
                         echo "<label for='eleve'>Eleves disponibles :</label>";
                         echo "<select name='eleve' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
-                            echo "<option value='" . $row['ideleve'] . "'>" . $row['prenom'] . " " . $row['nom'] . " naît le " . $row['dateNaiss'] . " Inscit le " . $row['dateInscription'] . "</option>";
+                            echo "<option value='" . $row['ideleve'] . "'>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né(e) le " . htmlspecialchars($row['dateNaiss']) . " inscit(e) le " . htmlspecialchars($row['dateInscription']) . "</option>";
                             
                         }
                         echo "</select>";
@@ -72,8 +72,9 @@
                                         die("Query failed: $requete_theme" . mysqli_error($connect));
                                     } 
                                     else {
+                                        $theme = mysqli_fetch_assoc($resultat_theme);
 
-                                        echo "<option value='" . $row['idseance'] . "'> Séance du " . $row['DateSeance'] . " sur le theme " . mysqli_fetch_assoc($resultat_theme)['nom'] . " (" . $places_restantes . " places restantes)</option>";
+                                        echo "<option value='" . $row['idseance'] . "'> Séance du " . htmlspecialchars($row['DateSeance']) . " sur le theme " . htmlspecialchars($theme['nom']) . " (" . htmlspecialchars($places_restantes) . " places restantes)</option>";
                                     }
                                 }
                             }

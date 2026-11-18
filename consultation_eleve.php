@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Consulterun élève</h1>
+        <h1>Consulter un élève</h1>
 
         <div class="form-container">
 
@@ -33,7 +33,7 @@
                         echo "<label for='theme'>Élèves disponibles :</label>";
                         echo "<select name='theme' size='1' required>";
                         while ($row = mysqli_fetch_assoc($resultat)) {
-                            echo "<option value='" . $row['ideleve'] . "'>" . $row['prenom'] . " " . $row['nom'] . " né le " . $row['dateNaiss'] . "</option>";
+                            echo "<option value='" . $row['ideleve'] . "'>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
                         }
                         echo "</select>";
                     }
@@ -42,7 +42,7 @@
                 ?>
                     </div>
                     <div class="form-actions">
-                        <input type="submit" value="Enregistrer">
+                        <input type="submit" value="Consulter">
                         <input type="reset" value="Réinitialiser">
                     </div>
             </form>

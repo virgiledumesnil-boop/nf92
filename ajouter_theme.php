@@ -21,8 +21,9 @@ if (!$erreur) {
         mysqli_set_charset($connect, "utf8");
         
         $nom_sec = mysqli_real_escape_string($connect, $nom);
+        $description_sec = mysqli_real_escape_strings($connect, $description);
         
-        $query = "SELECT * FROM themes WHERE `nom`= '" . $nom ."'";
+        $query = "SELECT * FROM themes WHERE `nom`= '" . $nom_sec ."'";
         $result = mysqli_query($connect, $query);
         if ($result) {
             $num_row = mysqli_num_rows($result);
@@ -33,7 +34,7 @@ if (!$erreur) {
                     $erreur_type = "existe_deja";
                 }
                 else{
-                    $query = "UPDATE themes SET `supprime`= 0, `descriptif`='$description' WHERE nom = '$nom'";
+                    $query = "UPDATE themes SET `supprime`= 0, `descriptif`='$description_sec' WHERE nom = '$nom_sec'";
                     if (mysqli_query($connect, $query)) {
                         $insertion_reussie = true;
                         $insertion = "reactivation";
@@ -48,7 +49,7 @@ if (!$erreur) {
         mysqli_close($connect);
     }
 }
-if (!$erreur & !$insertion_reussie) {
+if (!$erreur && !$insertion_reussie) {
     $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
     if ($connect) {
         mysqli_set_charset($connect, "utf8");
@@ -67,7 +68,7 @@ if (!$erreur & !$insertion_reussie) {
 
 ?>
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
@@ -103,21 +104,21 @@ if (!$erreur & !$insertion_reussie) {
 
                 </form>
             </div>
-        </body>
-    <?php elseif ($insertion_reussie): ?>
-        <h1>Opération réussie</h1>
-        <div class="resultat-carte">
-            <p><strong>Nom du theme :</strong> <?php echo htmlspecialchars($nom); ?></p>
-            <p><strong>Description :</strong> <?php echo htmlspecialchars($description); ?></p>
-            <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
-            <?php if($insertion == "creation"){echo "<p style='color: #457B9D; font-weight: bold;'>Le theme a été ajouté avec succès à la base de données.</p>";}; ?>
-            <?php if($insertion == "reactivation"){echo"<p style ='color: #457B9D; font-weight: bold;'>Le theme a été réactivé avec succès à la base de données.</p>";}; ?>
-        </div>
-    <?php else: ?>
-        <h1>Erreur technique</h1>
-        <div class="resultat-carte" style="border-left-color: #E63946;">
-            <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
-            <p>Veuillez contacter l'administrateur.</p>
-        </div>
-    <?php endif; ?>
+        <?php elseif ($insertion_reussie): ?>
+            <h1>Opération réussie</h1>
+            <div class="resultat-carte">
+                <p><strong>Nom du theme :</strong> <?php echo htmlspecialchars($nom); ?></p>
+                <p><strong>Description :</strong> <?php echo htmlspecialchars($description); ?></p>
+                <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
+                <?php if($insertion == "creation"){echo "<p style='color: #457B9D; font-weight: bold;'>Le theme a été ajouté avec succès à la base de données.</p>";}; ?>
+                <?php if($insertion == "reactivation"){echo"<p style ='color: #457B9D; font-weight: bold;'>Le theme a été réactivé avec succès à la base de données.</p>";}; ?>
+            </div>
+        <?php else: ?>
+            <h1>Erreur technique</h1>
+            <div class="resultat-carte" style="border-left-color: #E63946;">
+                <p>Impossible de se connecter à la base de données ou d'enregistrer l'élève.</p>
+                <p>Veuillez contacter l'administrateur.</p>
+            </div>
+        <?php endif; ?>
+    <body>
 </html>

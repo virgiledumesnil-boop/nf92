@@ -2,11 +2,11 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>Desinscrir un élève</title>
+        <title>Désinscrire un élève</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Desinscrir un élève d'une séance</h1>
+        <h1>Désinscrire un élève d'une séance</h1>
         <div class="form-container">
             <form action="desinscrire_eleve.php" method="post">
                 <div class="form-group">
@@ -67,7 +67,9 @@
                                 $prenom_eleve = $eleve['prenom'];
                                 $date_naissance = $eleve['dateNaiss'];
                             }
-                            echo "<option value ='$idseance-$ideleve'>$prenom_eleve $nom_eleve né(e) le $date_naissance inscrit a la séance du $date_seance sur le thème '$nom_theme'</option>";
+                            if($date_seance >= $date){
+                                echo "<option value ='$idseance-$ideleve'>" . htmlspecialchars($prenom_eleve) . " " . htmlspecialchars($nom_eleve) . " né(e) le " . htmlspecialchars($date_naissance) . " inscrit a la séance du " . htmlspecialchars($date_seance) . " sur le thème '" . htmlspecialchars($nom_theme) . "'</option>";
+                            }
                         }
                         echo "</select>";
                         echo "</div>";
