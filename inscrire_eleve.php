@@ -222,6 +222,10 @@ if (!$erreur) {
                 <p><strong>Eleve :</strong> <?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom) . " né le $date_naissance" ; ?></p>
                 <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
                 <p style="color: #457B9D; font-weight: bold;">L'élève a été inscrit avec succès à la séance.</p>
+                <div class="back-home">
+                    <a href="inscription_eleve.php" target="contenu" class="valider">Inscrire un autre élève</a>
+                    <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                </div>
             </div>
         <?php else: ?>
             <h1>Erreur technique</h1>

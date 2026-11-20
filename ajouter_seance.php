@@ -162,6 +162,10 @@ if (!$erreur) {
                 <p><strong>Effectif maximum :</strong> <?php echo htmlspecialchars($EffMax); ?></p>
                 <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
                 <p style="color: #457B9D; font-weight: bold;">La séance a été ajouté avec succès à la base de données.</p>
+                <div class="back-home">
+                    <a href="ajout_seance.php" target="contenu" class="valider">Ajouter une autre séance</a>
+                    <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                </div>
             </div>
         <?php else: ?>
             <h1>Erreur technique</h1>

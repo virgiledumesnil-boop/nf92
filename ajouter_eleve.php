@@ -139,6 +139,10 @@ if (!$erreur && !$homonyme) {
                 <p><strong>Inscrit le :</strong> <?php echo $date; ?></p>
                 <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
                 <p style="color: #457B9D; font-weight: bold;">L'élève a été ajouté avec succès à la base de données.</p>
+                <div class="back-home">
+                    <a href="ajout_eleve.html" target="contenu" class="valider">Ajouter un autre élève</a>
+                    <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                </div>
             </div>
         <?php else: ?>
             <h1>Erreur technique</h1>

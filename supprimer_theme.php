@@ -114,6 +114,10 @@ if (!$erreur) {
                 <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
                 <?php if($insertion == "creation"){echo "<p style='color: #457B9D; font-weight: bold;'>Le theme a été ajouté avec succès à la base de données.</p>";}; ?>
                 <?php if($insertion == "reactivation"){echo"<p style ='color: #457B9D; font-weight: bold;'>Le theme a été réactivé avec succès à la base de données.</p>";}; ?>
+                <div class="back-home">
+                    <a href="supression_theme.php" target="contenu" class="valider">Supprimer un autre thème</a>
+                    <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                </div>
             </div>
         <?php else: ?>
             <h1>Erreur technique</h1>

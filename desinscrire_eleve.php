@@ -185,6 +185,10 @@ if (!$erreur) {
                 <p><strong>Eleve :</strong> <?php echo htmlspecialchars($prenom_eleve) . " " . htmlspecialchars($nom_eleve) . " né(e) le $date_naissance" ; ?></p>
                 <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 15px 0;">
                 <p style="color: #457B9D; font-weight: bold;">L'élève a été desinscrit de la séance avec succès.</p>
+                <div class="back-home">
+                    <a href="desinscription_eleve.php" target="contenu" class="valider">Desinscrire un autre élève</a>
+                    <a href="accueil.html" target="contenu" class="continuer">Retour à l'accueil</a>
+                </div>
             </div>
         <?php else: ?>
             <h1>Erreur technique</h1>
