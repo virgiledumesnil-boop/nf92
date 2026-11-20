@@ -1,5 +1,5 @@
 <?php
-$idtheme = isset($_POST['theme']) ? interval($_POST['theme']) : 0;
+$idtheme = isset($_POST['theme']) ? intval($_POST['theme']) : 0;
 $date = isset($_POST['date']) ? $_POST['date'] : '';
 $EffMax = isset($_POST['EffMax']) ? $_POST['EffMax'] : '';
 date_default_timezone_set('Europe/Paris');

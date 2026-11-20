@@ -3,8 +3,8 @@
 date_default_timezone_set('Europe/Paris');
 $date = date('Y-m-d');
 
-$idseance = isset($_POST['seance']) ? interval($_POST['seance']) : '';
-$ideleve = isset($_POST['eleve']) ? interval($_POST['eleve']) : '';
+$idseance = isset($_POST['seance']) ? intval($_POST['seance']) : '';
+$ideleve = isset($_POST['eleve']) ? intval($_POST['eleve']) : '';
 
 $erreur = false;
 $insertion_reussie = false;

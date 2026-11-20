@@ -1,5 +1,5 @@
 <?php
-$idtheme_form = isset($_POST['idtheme']) ? interval($_POST['idtheme']) : '';
+$idtheme_form = isset($_POST['idtheme']) ? intval($_POST['idtheme']) : '';
 
 $erreur = false;
 $suppression_reussie = false;

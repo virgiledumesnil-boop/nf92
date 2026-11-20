@@ -2,8 +2,8 @@
 
 $inscriptions_post = isset($_POST['inscriptions']) ? $_POST['inscriptions'] : '';
 $identifiants = explode('-', $inscriptions_post);
-$idseance_form = isset($identifiants[0]) ? $identifiants[0] : '';
-$ideleve_form  = isset($identifiants[1]) ? $identifiants[1] : '';
+$idseance_form = isset($identifiants[0]) ? intval($identifiants[0]) : '';
+$ideleve_form  = isset($identifiants[1]) ? intval($identifiants[1]) : '';
 
 $erreur = false;
 $suppression_reussie = false;

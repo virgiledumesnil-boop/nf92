@@ -1,5 +1,5 @@
 <?php
-$ideleve = isset($_POST['theme']) ? interval($_POST['theme']) : '';
+$ideleve = isset($_POST['theme']) ? intval($_POST['theme']) : '';
 date_default_timezone_set('Europe/Paris');
 $date_ajd = date('Y-m-d');
 
