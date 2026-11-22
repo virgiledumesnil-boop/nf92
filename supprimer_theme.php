@@ -10,38 +10,31 @@ if (empty($idtheme_form)) {
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
-        $query = "SELECT * FROM themes WHERE `idtheme`=$idtheme_form";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            if (mysqli_num_rows($result)==0){
-                $erreur = true;
-                $erreur_type = "existe_pas";
-            }
+    require 'connexion.php';
+    $query = "SELECT * FROM themes WHERE `idtheme`=$idtheme_form";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        if (mysqli_num_rows($result)==0){
+            $erreur = true;
+            $erreur_type = "existe_pas";
         }
-        mysqli_close($connect);
     }
+    mysqli_close($connect);
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
-
-        $query = "SELECT * FROM themes WHERE `idtheme`=$idtheme_form";
-        $reslut = mysqli_query($connect,$query);
-        $theme = mysqli_fetch_assoc($result);
-        $nom_theme = $theme['nom'];
-        $description = $theme['descriptif'];
-                
-        $query = "UPDATE `themes` SET `supprime`= 1 WHERE idtheme = '$idtheme'";
-        if (mysqli_query($connect, $query)) {
-            $suppression_reussie = true;
-        }
-        mysqli_close($connect);
+    require 'connexion.php';
+    $query = "SELECT * FROM themes WHERE `idtheme`=$idtheme_form";
+    $reslut = mysqli_query($connect,$query);
+    $theme = mysqli_fetch_assoc($result);
+    $nom_theme = $theme['nom'];
+    $description = $theme['descriptif'];
+            
+    $query = "UPDATE `themes` SET `supprime`= 1 WHERE idtheme = '$idtheme'";
+    if (mysqli_query($connect, $query)) {
+        $suppression_reussie = true;
     }
+    mysqli_close($connect);
 }
 
 ?>
@@ -66,36 +59,20 @@ if (!$erreur) {
 
                 <?php
 
-                $dbhost="tuxa.sme.utc";
-                $dbname="nf92a022";
-                $dbuser="nf92a022";
-                $dbpass="yqtLMEgACs67";
-
-
-
-                $connect=mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                require 'connexion.php';
+                $requete = "SELECT `idtheme`,`nom` FROM themes WHERE supprime = 0";
+                $resultat = mysqli_query($connect,$requete);
+                if (!$resultat) {
+                    die("Query failed: $requete" . mysqli_error($connect));
+                } 
                 else {
-                    mysqli_set_charset($connect,"utf8");
-
-                    $requete = "SELECT `idtheme`,`nom` FROM themes WHERE supprime = 0";
-                    $resultat = mysqli_query($connect,$requete);
-                    if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
-                    } 
-                    else {
-                        echo "<label for='theme'>Thèmes disponibles :</label>";
-                        echo "<select name='idtheme' size='1' class='erreur-champ' required>";
-                        while ($row = mysqli_fetch_assoc($resultat)) {
-                            $selected = ($row['idtheme']==$idtheme_form) ? "selected" : "";
-                            echo "<option value='" . $row['idtheme'] . "' $selected>" . htmlspecialchars($row['nom']) . "</option>";
-                        }
-                        echo "</select>";
+                    echo "<label for='theme'>Thèmes disponibles :</label>";
+                    echo "<select name='idtheme' size='1' class='erreur-champ' required>";
+                    while ($row = mysqli_fetch_assoc($resultat)) {
+                        $selected = ($row['idtheme']==$idtheme_form) ? "selected" : "";
+                        echo "<option value='" . $row['idtheme'] . "' $selected>" . htmlspecialchars($row['nom']) . "</option>";
                     }
-                
+                    echo "</select>";
                 }
                 ?>
 

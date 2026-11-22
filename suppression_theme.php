@@ -16,35 +16,20 @@
 
                 <?php
 
-                $dbhost="tuxa.sme.utc";
-                $dbname="nf92a022";
-                $dbuser="nf92a022";
-                $dbpass="yqtLMEgACs67";
+                require 'connexion.php';
 
-
-
-                $connect=mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                $requete = "SELECT `idtheme`,`nom` FROM themes WHERE supprime = 0";
+                $resultat = mysqli_query($connect,$requete);
+                if (!$resultat) {
+                    die("Query failed: $requete" . mysqli_error($connect));
+                } 
                 else {
-                    mysqli_set_charset($connect,"utf8");
-
-                    $requete = "SELECT `idtheme`,`nom` FROM themes WHERE supprime = 0";
-                    $resultat = mysqli_query($connect,$requete);
-                    if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
-                    } 
-                    else {
-                        echo "<label for='theme'>Thèmes disponibles :</label>";
-                        echo "<select name='idtheme' size='1' required>";
-                        while ($row = mysqli_fetch_assoc($resultat)) {
-                            echo "<option value='" . $row['idtheme'] . "'>" . htmlspecialchars($row['nom']) . "</option>";
-                        }
-                        echo "</select>";
+                    echo "<label for='theme'>Thèmes disponibles :</label>";
+                    echo "<select name='idtheme' size='1' required>";
+                    while ($row = mysqli_fetch_assoc($resultat)) {
+                        echo "<option value='" . $row['idtheme'] . "'>" . htmlspecialchars($row['nom']) . "</option>";
                     }
-                
+                    echo "</select>";
                 }
                 
                 echo <<< HTML

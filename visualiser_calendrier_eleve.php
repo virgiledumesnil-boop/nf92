@@ -12,36 +12,32 @@ if (empty($ideleve)) {
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
-        
-        $query = "SELECT * FROM eleves WHERE ideleve='$ideleve'";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            if (mysqli_num_rows($result)<1){
-                $erreur = true;
-                $erreur_type = "inexistant";
-            }
-            else{
-                $eleve = mysqli_fetch_assoc($result);
-                $prenom = $eleve['prenom'];
-                $nom = $eleve['nom'];
-                $date_naiss = $eleve['dateNaiss'];
-                $date_ins = $eleve['dateInscription'];
-                $age = date_diff(date_create($date_naiss),date_create($date_ajd));
-                $lecture_reussie = True;
-            }
+    require 'connexion.php';        
+    $query = "SELECT * FROM eleves WHERE ideleve='$ideleve'";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        if (mysqli_num_rows($result)<1){
+            $erreur = true;
+            $erreur_type = "inexistant";
         }
-        mysqli_set_charset($connect, "utf8");
-        
-        $query = "SELECT * FROM inscription WHERE ideleve='$ideleve'";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            $num_seances=mysqli_num_rows($result);
+        else{
+            $eleve = mysqli_fetch_assoc($result);
+            $prenom = $eleve['prenom'];
+            $nom = $eleve['nom'];
+            $date_naiss = $eleve['dateNaiss'];
+            $date_ins = $eleve['dateInscription'];
+            $age = date_diff(date_create($date_naiss),date_create($date_ajd));
+            $lecture_reussie = True;
         }
-        mysqli_close($connect);
     }
+    mysqli_set_charset($connect, "utf8");
+    
+    $query = "SELECT * FROM inscription WHERE ideleve='$ideleve'";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        $num_seances=mysqli_num_rows($result);
+    }
+    mysqli_close($connect);
 }
 
 ?>
@@ -67,32 +63,24 @@ if (!$erreur) {
 
                 <?php
 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                require 'connexion.php';
+                mysqli_set_charset($connect,"utf8");
 
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                $requete = "SELECT `ideleve`,`nom`,`prenom`,`dateNaiss` FROM eleves WHERE 1";
+                $resultat = mysqli_query($connect,$requete);
+                if (!$resultat) {
+                    die("Query failed: $requete" . mysqli_error($connect));
+                } 
                 else {
-                    mysqli_set_charset($connect,"utf8");
-
-                    $requete = "SELECT `ideleve`,`nom`,`prenom`,`dateNaiss` FROM eleves WHERE 1";
-                    $resultat = mysqli_query($connect,$requete);
-                    if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
-                    } 
-                    else {
-                        echo "<label for='theme'>Élèves disponibles :</label>";
-                        $classe_select = ($erreur) ? "class='erreur-champ'" : "";
-                        echo "<select name='theme' size='1' $classe_select required>";
-                        while ($row = mysqli_fetch_assoc($resultat)) {
-                            $selected = ($row['ideleve']==$ideleve) ? "selected" : "";
-                            echo "<option value='" . $row['ideleve'] . "' $selected>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
-                        }
-                        echo "</select>";
+                    echo "<label for='theme'>Élèves disponibles :</label>";
+                    $classe_select = ($erreur) ? "class='erreur-champ'" : "";
+                    echo "<select name='theme' size='1' $classe_select required>";
+                    while ($row = mysqli_fetch_assoc($resultat)) {
+                        $selected = ($row['ideleve']==$ideleve) ? "selected" : "";
+                        echo "<option value='" . $row['ideleve'] . "' $selected>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
                     }
-                
-                }
-                
+                    echo "</select>";
+                }                
                     if ($erreur_type=="ideleve"){echo"<span class='texte-erreur'>Veuillez selectioner un élève</span>";};
                     if ($erreur_type == "inexistant"){echo "<span class='texte-erreur'>l'élève n'existe pas dans la base de donnée</span>";}
                 ?>
@@ -116,42 +104,38 @@ if (!$erreur) {
                 <?php
                 $calendrier = [];
 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-                if ($connect) {
-                    mysqli_set_charset($connect, "utf8");
-                    
-                    $query_inscr = "SELECT * FROM inscription WHERE ideleve='$ideleve'";
-                    $res_inscr = mysqli_query($connect, $query_inscr);
-                    
-                    if ($res_inscr) {
-                        while ($row = mysqli_fetch_assoc($res_inscr)) {
+                require 'connexion.php';                    
+                $query_inscr = "SELECT * FROM inscription WHERE ideleve='$ideleve'";
+                $res_inscr = mysqli_query($connect, $query_inscr);
+                
+                if ($res_inscr) {
+                    while ($row = mysqli_fetch_assoc($res_inscr)) {
+                        
+                        $query_seance = "SELECT * FROM seances WHERE idseance='" . $row['idseance'] . "'";
+                        $res_seance = mysqli_query($connect, $query_seance);
+                        
+                        if ($res_seance) {
+                            $seance_info = mysqli_fetch_assoc($res_seance);
+                            $date_seance = $seance_info['DateSeance'];
+                            $idtheme = $seance_info['Idtheme'];
                             
-                            $query_seance = "SELECT * FROM seances WHERE idseance='" . $row['idseance'] . "'";
-                            $res_seance = mysqli_query($connect, $query_seance);
-                            
-                            if ($res_seance) {
-                                $seance_info = mysqli_fetch_assoc($res_seance);
-                                $date_seance = $seance_info['DateSeance'];
-                                $idtheme = $seance_info['Idtheme'];
+                            if ($date_seance >= $date_ajd) {
                                 
-                                if ($date_seance >= $date_ajd) {
-                                    
-                                    $query_theme = "SELECT * FROM themes WHERE idtheme='$idtheme'";
-                                    $res_theme = mysqli_query($connect, $query_theme);
-                                    
-                                    if ($res_theme) {
-                                        $theme_info = mysqli_fetch_assoc($res_theme);
-                                        $calendrier[] = [
-                                            'title' => $theme_info['nom'],
-                                            'start' => $date_seance
-                                        ];
-                                    }
+                                $query_theme = "SELECT * FROM themes WHERE idtheme='$idtheme'";
+                                $res_theme = mysqli_query($connect, $query_theme);
+                                
+                                if ($res_theme) {
+                                    $theme_info = mysqli_fetch_assoc($res_theme);
+                                    $calendrier[] = [
+                                        'title' => $theme_info['nom'],
+                                        'start' => $date_seance
+                                    ];
                                 }
                             }
                         }
                     }
-                    mysqli_close($connect);
                 }
+                mysqli_close($connect);
                 ?>
 
                 <?php if (empty($calendrier)): ?>

@@ -16,29 +16,22 @@
 
                 <?php
 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                require 'connexion.php';
+                $requete = "SELECT `ideleve`,`nom`,`prenom`,`dateNaiss` FROM eleves WHERE 1";
+                $resultat = mysqli_query($connect,$requete);
+                if (!$resultat) {
+                    die("Query failed: $requete" . mysqli_error($connect));
+                } 
                 else {
-                    mysqli_set_charset($connect,"utf8");
-
-                    $requete = "SELECT `ideleve`,`nom`,`prenom`,`dateNaiss` FROM eleves WHERE 1";
-                    $resultat = mysqli_query($connect,$requete);
-                    if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
-                    } 
-                    else {
-                        echo "<label for='theme'>Élèves disponibles :</label>";
-                        echo "<select name='theme' size='1' required>";
-                        while ($row = mysqli_fetch_assoc($resultat)) {
-                            echo "<option value='" . $row['ideleve'] . "'>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
-                        }
-                        echo "</select>";
+                    echo "<label for='theme'>Élèves disponibles :</label>";
+                    echo "<select name='theme' size='1' required>";
+                    while ($row = mysqli_fetch_assoc($resultat)) {
+                        echo "<option value='" . $row['ideleve'] . "'>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
                     }
-                mysqli_close($connect);
+                    echo "</select>";
                 }
+                mysqli_close($connect);
+                
                 ?>
                     </div>
                     <div class="form-actions">

@@ -15,66 +15,59 @@
 
                 date_default_timezone_set('Europe/Paris');
                 $date = date('Y-m-d');
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                require 'connexion.php';
 
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
+                $query_inscription = "SELECT * FROM inscription WHERE 1";
+                $result_incription = mysqli_query($connect,$query_inscription);
+                if(!$result_incription) {
+                    die("Query failed: $query_inscription" . mysqli_error($connect));
                 }
-                else {
-                    mysqli_set_charset($connect,"utf8");
+                else{
+                    echo "<label for='inscriptions'>Inscriptions :</label>";
+                    echo "<select name='inscriptions' size='1' required>";
+                    while($row = mysqli_fetch_assoc($result_incription)){
+                        $idseance = $row['idseance'];
+                        $ideleve = $row['ideleve'];
 
-                    $query_inscription = "SELECT * FROM inscription WHERE 1";
-                    $result_incription = mysqli_query($connect,$query_inscription);
-                    if(!$result_incription) {
-                        die("Query failed: $query_inscription" . mysqli_error($connect));
-                    }
-                    else{
-                        echo "<label for='inscriptions'>Inscriptions :</label>";
-                        echo "<select name='inscriptions' size='1' required>";
-                        while($row = mysqli_fetch_assoc($result_incription)){
-                            $idseance = $row['idseance'];
-                            $ideleve = $row['ideleve'];
-
-                            $query_seance = "SELECT * FROM seances WHERE idseance=$idseance";
-                            $result_seance = mysqli_query($connect,$query_seance);
-                            if(!$result_seance) {
-                                die("Query failed: $query_seance" . mysqli_error($connect));
-                            }
-                            else{
-                                $seance = mysqli_fetch_assoc($result_seance);
-                                $idtheme = $seance['Idtheme'];
-                                $date_seance = $seance['DateSeance'];
-                            }
-
-                            $query_theme = "SELECT * FROM themes WHERE idtheme=$idtheme";
-                            $result_theme = mysqli_query($connect,$query_theme);
-                            if(!$result_theme) {
-                                die("Query failed: $query_theme" . mysqli_error($connect));
-                            }
-                            else{
-                                $theme = mysqli_fetch_assoc($result_theme);
-                                $nom_theme = $theme['nom'];
-                            }
-
-                            $query_eleve = "SELECT * FROM eleves WHERE ideleve=$ideleve";
-                            $result_eleve = mysqli_query($connect,$query_eleve);
-                            if(!$result_eleve) {
-                                die("Query failed: $query_eleve" . mysqli_error($connect));
-                            }
-                            else{
-                                $eleve = mysqli_fetch_assoc($result_eleve);
-                                $nom_eleve = $eleve['nom'];
-                                $prenom_eleve = $eleve['prenom'];
-                                $date_naissance = $eleve['dateNaiss'];
-                            }
-                            if($date_seance >= $date){
-                                echo "<option value ='$idseance-$ideleve'>" . htmlspecialchars($prenom_eleve) . " " . htmlspecialchars($nom_eleve) . " né(e) le " . htmlspecialchars($date_naissance) . " inscrit a la séance du " . htmlspecialchars($date_seance) . " sur le thème '" . htmlspecialchars($nom_theme) . "'</option>";
-                            }
+                        $query_seance = "SELECT * FROM seances WHERE idseance=$idseance";
+                        $result_seance = mysqli_query($connect,$query_seance);
+                        if(!$result_seance) {
+                            die("Query failed: $query_seance" . mysqli_error($connect));
                         }
-                        echo "</select>";
-                        echo "</div>";
+                        else{
+                            $seance = mysqli_fetch_assoc($result_seance);
+                            $idtheme = $seance['Idtheme'];
+                            $date_seance = $seance['DateSeance'];
+                        }
 
+                        $query_theme = "SELECT * FROM themes WHERE idtheme=$idtheme";
+                        $result_theme = mysqli_query($connect,$query_theme);
+                        if(!$result_theme) {
+                            die("Query failed: $query_theme" . mysqli_error($connect));
+                        }
+                        else{
+                            $theme = mysqli_fetch_assoc($result_theme);
+                            $nom_theme = $theme['nom'];
+                        }
+
+                        $query_eleve = "SELECT * FROM eleves WHERE ideleve=$ideleve";
+                        $result_eleve = mysqli_query($connect,$query_eleve);
+                        if(!$result_eleve) {
+                            die("Query failed: $query_eleve" . mysqli_error($connect));
+                        }
+                        else{
+                            $eleve = mysqli_fetch_assoc($result_eleve);
+                            $nom_eleve = $eleve['nom'];
+                            $prenom_eleve = $eleve['prenom'];
+                            $date_naissance = $eleve['dateNaiss'];
+                        }
+                        if($date_seance >= $date){
+                            echo "<option value ='$idseance-$ideleve'>" . htmlspecialchars($prenom_eleve) . " " . htmlspecialchars($nom_eleve) . " né(e) le " . htmlspecialchars($date_naissance) . " inscrit a la séance du " . htmlspecialchars($date_seance) . " sur le thème '" . htmlspecialchars($nom_theme) . "'</option>";
+                        }
                     }
+                    echo "</select>";
+                    echo "</div>";
+
                 }
                 mysqli_close($connect);
                 ?>

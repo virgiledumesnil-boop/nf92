@@ -12,29 +12,27 @@ if (empty($ideleve)) {
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
+    require 'connexion.php';
         
-        $query = "SELECT * FROM eleves WHERE ideleve='$ideleve'";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            if (mysqli_num_rows($result)<1){
-                $erreur = true;
-                $erreur_type = "inexistant";
-            }
-            else{
-                $eleve = mysqli_fetch_assoc($result);
-                $prenom = $eleve['prenom'];
-                $nom = $eleve['nom'];
-                $date_naiss = $eleve['dateNaiss'];
-                $date_ins = $eleve['dateInscription'];
-                $lecture_reussie = True;
-            }
+    $query = "SELECT * FROM eleves WHERE ideleve='$ideleve'";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        if (mysqli_num_rows($result)<1){
+            $erreur = true;
+            $erreur_type = "inexistant";
         }
-        mysqli_close($connect);
+        else{
+            $eleve = mysqli_fetch_assoc($result);
+            $prenom = $eleve['prenom'];
+            $nom = $eleve['nom'];
+            $date_naiss = $eleve['dateNaiss'];
+            $date_ins = $eleve['dateInscription'];
+            $lecture_reussie = True;
+        }
     }
+    mysqli_close($connect);
 }
+
 
 ?>
 
@@ -58,30 +56,22 @@ if (!$erreur) {
 
                 <?php
 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                require 'connexion.php';
 
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                $requete = "SELECT `ideleve`,`nom`,`prenom`,`dateNaiss` FROM eleves WHERE 1";
+                $resultat = mysqli_query($connect,$requete);
+                if (!$resultat) {
+                    die("Query failed: $requete" . mysqli_error($connect));
+                } 
                 else {
-                    mysqli_set_charset($connect,"utf8");
-
-                    $requete = "SELECT `ideleve`,`nom`,`prenom`,`dateNaiss` FROM eleves WHERE 1";
-                    $resultat = mysqli_query($connect,$requete);
-                    if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
-                    } 
-                    else {
-                        echo "<label for='theme'>Élèves disponibles :</label>";
-                        $classe_select = ($erreur) ? "class='erreur-champ'" : "";
-                        echo "<select name='theme' size='1' $classe_select required>";
-                        while ($row = mysqli_fetch_assoc($resultat)) {
-                            $selected = ($row['ideleve']==$ideleve) ? "selected" : "";
-                            echo "<option value='" . $row['ideleve'] . "' $selected>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
-                        }
-                        echo "</select>";
+                    echo "<label for='theme'>Élèves disponibles :</label>";
+                    $classe_select = ($erreur) ? "class='erreur-champ'" : "";
+                    echo "<select name='theme' size='1' $classe_select required>";
+                    while ($row = mysqli_fetch_assoc($resultat)) {
+                        $selected = ($row['ideleve']==$ideleve) ? "selected" : "";
+                        echo "<option value='" . $row['ideleve'] . "' $selected>" . htmlspecialchars($row['prenom']) . " " . htmlspecialchars($row['nom']) . " né le " . htmlspecialchars($row['dateNaiss']) . "</option>";
                     }
-                
+                    echo "</select>";
                 }
                 
                     if ($erreur_type=="ideleve"){echo"<span class='texte-erreur'>Veuillez selectioner un élève</span>";};

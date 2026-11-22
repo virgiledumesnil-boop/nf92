@@ -16,54 +16,49 @@ $erreur = true;
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
+   require 'connexion.php';
         
-        $nom_sec = mysqli_real_escape_string($connect, $nom);
-        $description_sec = mysqli_real_escape_strings($connect, $description);
-        
-        $query = "SELECT * FROM themes WHERE `nom`= '" . $nom_sec ."'";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            $num_row = mysqli_num_rows($result);
-            if($num_row == 1) {
-                $row = mysqli_fetch_assoc($result);
-                if ($row['supprime']==0){
-                    $erreur = true;
-                    $erreur_type = "existe_deja";
-                }
-                else{
-                    $query = "UPDATE themes SET `supprime`= 0, `descriptif`='$description_sec' WHERE nom = '$nom_sec'";
-                    if (mysqli_query($connect, $query)) {
-                        $insertion_reussie = true;
-                        $insertion = "reactivation";
-                    }
-                }
-            }   
-            elseif($num_row>1){
+    $nom_sec = mysqli_real_escape_string($connect, $nom);
+    $description_sec = mysqli_real_escape_strings($connect, $description);
+    
+    $query = "SELECT * FROM themes WHERE `nom`= '" . $nom_sec ."'";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        $num_row = mysqli_num_rows($result);
+        if($num_row == 1) {
+            $row = mysqli_fetch_assoc($result);
+            if ($row['supprime']==0){
                 $erreur = true;
-                $erreur_type = "plusieurs_memes_nom";
+                $erreur_type = "existe_deja";
             }
+            else{
+                $query = "UPDATE themes SET `supprime`= 0, `descriptif`='$description_sec' WHERE nom = '$nom_sec'";
+                if (mysqli_query($connect, $query)) {
+                    $insertion_reussie = true;
+                    $insertion = "reactivation";
+                }
+            }
+        }   
+        elseif($num_row>1){
+            $erreur = true;
+            $erreur_type = "plusieurs_memes_nom";
         }
-        mysqli_close($connect);
     }
+    mysqli_close($connect);
 }
+
 if (!$erreur && !$insertion_reussie) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
+    require 'connexion.php';
         
-        $nom_sec = mysqli_real_escape_string($connect, $nom);
-        $description_sec = mysqli_real_escape_string($connect, $description);
-        
-        $query = "INSERT INTO themes (idtheme, nom, supprime, descriptif) VALUES (NULL, '$nom_sec', '0' ,'$description_sec')";
-        if (mysqli_query($connect, $query)) {
-            $insertion_reussie = true;
-            $insertion = "creation";
-        }
-        mysqli_close($connect);
+    $nom_sec = mysqli_real_escape_string($connect, $nom);
+    $description_sec = mysqli_real_escape_string($connect, $description);
+    
+    $query = "INSERT INTO themes (idtheme, nom, supprime, descriptif) VALUES (NULL, '$nom_sec', '0' ,'$description_sec')";
+    if (mysqli_query($connect, $query)) {
+        $insertion_reussie = true;
+        $insertion = "creation";
     }
+    mysqli_close($connect);
 }
 
 ?>

@@ -43,39 +43,32 @@ if(!$erreur){
 
 $homonyme=false;
 if (!$erreur && !$confirme) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
-
-        $nom_sec = mysqli_real_escape_string($nom);
-        $prenom_sec = mysqli_real_escape_string($prenom);
-        
-        $query = "SELECT * FROM eleves WHERE nom='$nom_sec' AND prenom='$prenom_sec'";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            if (mysqli_num_rows($result)>0)
-            $homonyme = True;
-        }
-        mysqli_close($connect);
+    require 'connexion.php';
+    $nom_sec = mysqli_real_escape_string($nom);
+    $prenom_sec = mysqli_real_escape_string($prenom);
+    
+    $query = "SELECT * FROM eleves WHERE nom='$nom_sec' AND prenom='$prenom_sec'";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        if (mysqli_num_rows($result)>0)
+        $homonyme = True;
     }
+    mysqli_close($connect);
 }
 
 $insertion_reussie = false;
 
 if (!$erreur && !$homonyme) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
+    require 'connexion.php';
         
-        $nom_sec = mysqli_real_escape_string($connect, $nom);
-        $prenom_sec = mysqli_real_escape_string($connect, $prenom);
-        
-        $query = "INSERT INTO eleves (ideleve, nom, prenom, dateNaiss, dateInscription) VALUES (NULL, '$nom_sec', '$prenom_sec', '$date_naissance', '$date')";
-        if (mysqli_query($connect, $query)) {
-            $insertion_reussie = true;
-        }
-        mysqli_close($connect);
+    $nom_sec = mysqli_real_escape_string($connect, $nom);
+    $prenom_sec = mysqli_real_escape_string($connect, $prenom);
+    
+    $query = "INSERT INTO eleves (ideleve, nom, prenom, dateNaiss, dateInscription) VALUES (NULL, '$nom_sec', '$prenom_sec', '$date_naissance', '$date')";
+    if (mysqli_query($connect, $query)) {
+        $insertion_reussie = true;
     }
+    mysqli_close($connect);
 }
 
 ?>

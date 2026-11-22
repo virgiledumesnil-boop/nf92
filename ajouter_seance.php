@@ -31,36 +31,30 @@ $erreur = true;
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
-        $query = "SELECT * FROM seances WHERE `DateSeance`='$date' AND `Idtheme`='$idtheme'";
-        $result = mysqli_query($connect, $query);
-        if ($result) {
-            if (mysqli_num_rows($result)>0){
-            $erreur = true;
-            $erreur_type = "existe_deja";
-            }
+    require 'connexion.php';
+    $query = "SELECT * FROM seances WHERE `DateSeance`='$date' AND `Idtheme`='$idtheme'";
+    $result = mysqli_query($connect, $query);
+    if ($result) {
+        if (mysqli_num_rows($result)>0){
+        $erreur = true;
+        $erreur_type = "existe_deja";
         }
-        mysqli_close($connect);
     }
+    mysqli_close($connect);
 }
 
 if (!$erreur) {
-    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-    if ($connect) {
-        mysqli_set_charset($connect, "utf8");
-        
-        $EffMax_sec = mysqli_real_escape_string($connect, $EffMax);
-        
-        $query = "INSERT INTO seances (idseance, DateSeance, EffMax, Idtheme) VALUES (NULL, '$date', '$EffMax_sec' ,'$idtheme')";
-        if (mysqli_query($connect, $query)) {
-            $insertion_reussie = true;
-            $insertion = "creation";
-        }
-        mysqli_close($connect);
+    require 'connexion.php'; 
+    $EffMax_sec = mysqli_real_escape_string($connect, $EffMax);
+    
+    $query = "INSERT INTO seances (idseance, DateSeance, EffMax, Idtheme) VALUES (NULL, '$date', '$EffMax_sec' ,'$idtheme')";
+    if (mysqli_query($connect, $query)) {
+        $insertion_reussie = true;
+        $insertion = "creation";
     }
+    mysqli_close($connect);
 }
+
 
 ?>
 
@@ -84,36 +78,30 @@ if (!$erreur) {
 
                 <?php
 
-                $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
+                require 'connexion.php';
 
-                if (!$connect) {
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                $requete = "SELECT `idtheme`,`nom`,`supprime` FROM themes WHERE 1";
+                $resultat = mysqli_query($connect,$requete);
+                if (!$resultat) {
+                    die("Query failed: $requete" . mysqli_error($connect));
+                } 
                 else {
-                    mysqli_set_charset($connect,"utf8");
-
-                    $requete = "SELECT `idtheme`,`nom`,`supprime` FROM themes WHERE 1";
-                    $resultat = mysqli_query($connect,$requete);
-                    if (!$resultat) {
-                        die("Query failed: $requete" . mysqli_error($connect));
-                    } 
-                    else {
-                        echo "<label for='theme'>Thèmes disponibles :</label>";
-                        $classe_select = ($erreur_type == "theme") ? "class='erreur-champ'" : "";
-                        echo "<select name='theme' id='theme' size='1' $classe_select required>";
-                        while ($row = mysqli_fetch_assoc($resultat)) {
-                            if ($row['supprime'] == 0) {
-                                $selected = ($row['idtheme']==$idtheme)?"selected" : "";
-                                echo "<option value='" . $row['idtheme'] . "' $selected>" . htmlspecialchars($row['nom']) . "</option>";
-                            }
-                        }
-                        echo "</select>";
-                        if ($erreur_type=="theme") {
-                            echo "<span class='texte-erreur'>Veuillez sélectionner un thème</span>";
+                    echo "<label for='theme'>Thèmes disponibles :</label>";
+                    $classe_select = ($erreur_type == "theme") ? "class='erreur-champ'" : "";
+                    echo "<select name='theme' id='theme' size='1' $classe_select required>";
+                    while ($row = mysqli_fetch_assoc($resultat)) {
+                        if ($row['supprime'] == 0) {
+                            $selected = ($row['idtheme']==$idtheme)?"selected" : "";
+                            echo "<option value='" . $row['idtheme'] . "' $selected>" . htmlspecialchars($row['nom']) . "</option>";
                         }
                     }
+                    echo "</select>";
+                    if ($erreur_type=="theme") {
+                        echo "<span class='texte-erreur'>Veuillez sélectionner un thème</span>";
+                    }
+                }
                 
-                }?>
+                ?>
                 
 
                     </div>
@@ -144,17 +132,11 @@ if (!$erreur) {
             <h1>Opération réussie</h1>
             <div class="resultat-carte">
                 <?php 
-                    $connect = mysqli_connect("tuxa.sme.utc", "nf92a022", "yqtLMEgACs67", "nf92a022");
-                    mysqli_set_charset($connect, "utf8");
-                    if (!$connect) {
-                        die("Connection failed: " . mysqli_connect_error());
-                    }
-                    else {
-                        $requete = "SELECT `nom` FROM themes WHERE idtheme='$idtheme'";
-                        $resultat = mysqli_query($connect,$requete);
-                        $theme = mysqli_fetch_assoc($resultat)['nom'];
-                        mysqli_close($connect);
-                    }
+                    require 'connexion.php';
+                    $requete = "SELECT `nom` FROM themes WHERE idtheme='$idtheme'";
+                    $resultat = mysqli_query($connect,$requete);
+                    $theme = mysqli_fetch_assoc($resultat)['nom'];
+                    mysqli_close($connect);
 
                 ?>
                 <p><strong>Theme :</strong> <?php echo htmlspecialchars($theme); ?></p>
